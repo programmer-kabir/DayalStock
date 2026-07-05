@@ -1,4 +1,4 @@
-import { useRef, useState,useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   FiSearch,
   FiImage,
@@ -10,7 +10,7 @@ import {
   FiBox,
   FiCamera,
 } from "react-icons/fi";
-
+import { Link } from "react-router-dom";
 const tags = [
   { label: "SVGs", icon: <FiBox /> },
   { label: "PNGs", icon: <FiGrid /> },
@@ -40,57 +40,54 @@ const demoImages = [
   "https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?auto=format&fit=crop&w=900&q=80",
 ];
 
-export default function ContentArea({ category, subcategory,contents }) {
+export default function ContentArea({ category, subcategory, contents }) {
   const [search, setSearch] = useState(subcategory || "");
   const [view, setView] = useState("grid");
   const [sort, setSort] = useState("Most Relevant");
   const scrollRef = useRef(null);
-
   const title = search || subcategory || category || "Pattern";
   const categoryName =
     category?.charAt(0).toUpperCase() + category?.slice(1) || "Vectors";
 
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+  const [activeTag, setActiveTag] = useState("");
 
-const [showLeftArrow, setShowLeftArrow] = useState(false);
-const [showRightArrow, setShowRightArrow] = useState(false);
-const [activeTag, setActiveTag] = useState("");
+  const checkTagScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-const checkTagScroll = () => {
-  const el = scrollRef.current;
-  if (!el) return;
+    const canScroll = el.scrollWidth > el.clientWidth + 5;
 
-  const canScroll = el.scrollWidth > el.clientWidth + 5;
-
-  setShowLeftArrow(canScroll && el.scrollLeft > 5);
-  setShowRightArrow(
-    canScroll && el.scrollLeft + el.clientWidth < el.scrollWidth - 5
-  );
-};
-
-useEffect(() => {
-  const el = scrollRef.current;
-  if (!el) return;
-
-  checkTagScroll();
-
-  el.addEventListener("scroll", checkTagScroll);
-  window.addEventListener("resize", checkTagScroll);
-
-  return () => {
-    el.removeEventListener("scroll", checkTagScroll);
-    window.removeEventListener("resize", checkTagScroll);
+    setShowLeftArrow(canScroll && el.scrollLeft > 5);
+    setShowRightArrow(
+      canScroll && el.scrollLeft + el.clientWidth < el.scrollWidth - 5,
+    );
   };
-}, []);
-const scrollTags = (direction) => {
-  if (!scrollRef.current) return;
 
-  scrollRef.current.scrollBy({
-    left: direction === "left" ? -420 : 420,
-    behavior: "smooth",
-  });
-};
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-console.log(contents)
+    checkTagScroll();
+
+    el.addEventListener("scroll", checkTagScroll);
+    window.addEventListener("resize", checkTagScroll);
+
+    return () => {
+      el.removeEventListener("scroll", checkTagScroll);
+      window.removeEventListener("resize", checkTagScroll);
+    };
+  }, []);
+  const scrollTags = (direction) => {
+    if (!scrollRef.current) return;
+
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -420 : 420,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <main className="min-w-0 flex-1 bg-white px-6 py-4">
       {/* Search Area */}
@@ -168,96 +165,97 @@ console.log(contents)
         </div>
       </div>
 
-{/* Horizontal Tags */}
-<div className="relative mt-8 border-y border-slate-100 bg-white py-4">
-  {showLeftArrow && (
-    <>
-      <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-white via-white/90 to-transparent" />
+      {/* Horizontal Tags */}
+      <div className="relative mt-8 border-y border-slate-100 bg-white py-4">
+        {showLeftArrow && (
+          <>
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-white via-white/90 to-transparent" />
 
-      <button
-        onClick={() => scrollTags("left")}
-        className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-700 shadow-md transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-      >
-        <FiChevronLeft className="text-[21px]" />
-      </button>
-    </>
-  )}
-
-  <div
-    ref={scrollRef}
-    className={`no-scrollbar flex gap-3 overflow-x-auto scroll-smooth ${
-      showLeftArrow ? "pl-14" : "pl-0"
-    } ${showRightArrow ? "pr-14" : "pr-0"}`}
-  >
-    {tags.map((tag) => {
-      const isActive = activeTag === tag.label;
-
-      return (
-        <button
-          key={tag.label}
-          onClick={() => setActiveTag(tag.label)}
-          className={`group flex shrink-0 items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-semibold transition-all duration-200 ${
-            isActive
-              ? "border-blue-500 bg-blue-50 text-blue-600"
-              : "border-slate-200 bg-slate-50 text-slate-800 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
-          }`}
-        >
-          {tag.icon && (
-            <span
-              className={`text-[18px] transition-colors ${
-                isActive
-                  ? "text-blue-600"
-                  : "text-slate-700 group-hover:text-blue-600"
-              }`}
+            <button
+              onClick={() => scrollTags("left")}
+              className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-700 shadow-md transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             >
-              {tag.icon}
-            </span>
-          )}
+              <FiChevronLeft className="text-[21px]" />
+            </button>
+          </>
+        )}
 
-          <span>{tag.label}</span>
-        </button>
-      );
-    })}
-  </div>
+        <div
+          ref={scrollRef}
+          className={`no-scrollbar flex gap-3 overflow-x-auto scroll-smooth ${
+            showLeftArrow ? "pl-14" : "pl-0"
+          } ${showRightArrow ? "pr-14" : "pr-0"}`}
+        >
+          {tags.map((tag) => {
+            const isActive = activeTag === tag.label;
 
-  {showRightArrow && (
-    <>
-      <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-white via-white/90 to-transparent" />
+            return (
+              <button
+                key={tag.label}
+                onClick={() => setActiveTag(tag.label)}
+                className={`group flex shrink-0 items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                  isActive
+                    ? "border-blue-500 bg-blue-50 text-blue-600"
+                    : "border-slate-200 bg-slate-50 text-slate-800 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                }`}
+              >
+                {tag.icon && (
+                  <span
+                    className={`text-[18px] transition-colors ${
+                      isActive
+                        ? "text-blue-600"
+                        : "text-slate-700 group-hover:text-blue-600"
+                    }`}
+                  >
+                    {tag.icon}
+                  </span>
+                )}
 
-      <button
-        onClick={() => scrollTags("right")}
-        className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-700 shadow-md transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-      >
-        <FiChevronRight className="text-[21px]" />
-      </button>
-    </>
-  )}
-</div>
+                <span>{tag.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {showRightArrow && (
+          <>
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-white via-white/90 to-transparent" />
+
+            <button
+              onClick={() => scrollTags("right")}
+              className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-700 shadow-md transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            >
+              <FiChevronRight className="text-[21px]" />
+            </button>
+          </>
+        )}
+      </div>
 
       {/* Images */}
       {view === "grid" ? (
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {contents.map((items, index) => (
-            <div
+            <Link
+            to={`/${category}/content/${items.slug}`}
               key={index}
               className="group relative aspect-[1.25/1] overflow-hidden rounded-md bg-slate-100"
             >
               <img
-  src={
-    items?.image_url
-      ? `https://dayalstock.com/${items?.image_url}`
-      : "/images/placeholder.jpg"
-  }
-  alt={items?.title || "Stock image"}
-  className="w-full h-full object-cover"
-/>
+                src={
+                  items?.image_url
+                    ? `https://dayalstock.com/${items?.image_url}`
+                    : "/images/placeholder.jpg"
+                }
+                alt={items?.title || "Stock image"}
+                className="w-full h-full object-cover"
+              />
 
               <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/70 to-transparent p-4 transition duration-300 group-hover:translate-y-0">
                 <p className="text-sm font-semibold text-white">
                   {title} Vector Pattern
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (

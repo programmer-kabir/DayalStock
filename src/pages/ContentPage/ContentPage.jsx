@@ -19,22 +19,24 @@ export default function ContentPage() {
     y: 50,
   });
 
-  const {    data: contents = [],
-    isLoading,
-    error,} = useContents()
-   
+  const { data: contents = [], isLoading, error } = useContents();
+
   const {
     data: categories = [],
-    isLoading:isCategoryLoading,
-    error:isCategoryError,
+    isLoading: isCategoryLoading,
+    error: isCategoryError,
   } = useCategories();
-const currentSubCategory = categories?.find(
-  (cat) => cat.slug === subcategory
-);
 
-console.log(contents);
-
-const currentContents = contents.filter(content=>Number(content?.subcategory_id)===Number(currentSubCategory?.id))
+  const currentSubCategory = categories?.find(
+    (cat) => cat.slug === subcategory,
+  );
+  const currentCategory = categories?.find(
+    (cat) => Number(cat.id) === Number(currentSubCategory?.parent_id),
+  );
+  const currentContents = contents.filter(
+    (content) =>
+      Number(content?.subcategory_id) === Number(currentSubCategory?.id),
+  );
 
   return (
     <div className="min-h-screen">
@@ -57,7 +59,11 @@ const currentContents = contents.filter(content=>Number(content?.subcategory_id)
           colorPosition={colorPosition}
           setColorPosition={setColorPosition}
         />
-        <ContentArea contents={currentContents} category={category} subcategory={subcategory} />
+        <ContentArea
+          contents={currentContents}
+          category={category}
+          subcategory={subcategory}
+        />
       </div>
     </div>
   );

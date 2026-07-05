@@ -1,17 +1,13 @@
 import { useState } from "react";
-import {
-  ChevronDown,
-  Bell,
-  Menu,
-  X,
-} from "lucide-react";
+import { ChevronDown, Bell, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import useAuth from "../utlis/Hooks/useAuth";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
-const {user} = useAuth()
+  const { user } = useAuth();
+
   const menus = [
     {
       name: "Vectors",
@@ -149,10 +145,12 @@ const {user} = useAuth()
         {/* Left */}
         <div className="flex items-center gap-10">
           {/* Logo */}
-          <Link to={'/'}>
-            
-
-              <img className="h-[205px]" src="https://dayalstock.com/images/logo/dayalstock.png" alt="" />
+          <Link to={"/"}>
+            <img
+              className="h-[150px]"
+              src="https://dayalstock.com/images/logo/dayalstock.png"
+              alt=""
+            />
           </Link>
 
           {/* Desktop Menu */}
@@ -160,9 +158,7 @@ const {user} = useAuth()
             {menus.map((menu) => (
               <div
                 key={menu.name}
-                onMouseEnter={() =>
-                  setActiveMenu(menu.name)
-                }
+                onMouseEnter={() => setActiveMenu(menu.name)}
               >
                 <button
                   className={`flex items-center gap-1 transition-all duration-300 text-[15px] font-medium
@@ -170,8 +166,8 @@ const {user} = useAuth()
                     activeMenu === null
                       ? "text-gray-800"
                       : activeMenu === menu.name
-                      ? "text-black"
-                      : "text-gray-400"
+                        ? "text-black"
+                        : "text-gray-400"
                   }`}
                 >
                   {menu.name}
@@ -184,34 +180,40 @@ const {user} = useAuth()
 
         {/* Right */}
         <div className="hidden lg:flex items-center gap-8">
-          <Bell
-            size={22}
-            className="cursor-pointer text-gray-700"
-          />
+          <Bell size={22} className="cursor-pointer text-gray-700" />
 
-          <button className="font-medium text-gray-800">
-            Plans
-          </button>
+          <button className="font-medium text-gray-800">Plans</button>
 
-          <Link to='/register' className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white hover:bg-orange-600">
-            Sign Up Free
-          </Link>
+          {user ? (
+            <Link
+              to="/profile"
+              title={user?.name}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-orange-500 text-lg font-bold uppercase text-white transition hover:bg-orange-600"
+            >
+              {user?.name?.charAt(0) || "U"}
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                className="rounded-xl bg-orange-500 px-8 py-3 font-semibold text-white hover:bg-orange-600"
+              >
+                Sign Up Free
+              </Link>
 
-          <Link to={'/login'} className="rounded-xl bg-gray-100 px-8 py-3 font-semibold">
-            Log In
-          </Link>
+              <Link
+                to={"/login"}
+                className="rounded-xl bg-gray-100 px-8 py-3 font-semibold"
+              >
+                Log In
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Button */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="lg:hidden"
-        >
-          {open ? (
-            <X size={28} />
-          ) : (
-            <Menu size={28} />
-          )}
+        <button onClick={() => setOpen(!open)} className="lg:hidden">
+          {open ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
@@ -220,19 +222,11 @@ const {user} = useAuth()
         <div className="absolute left-0 top-full z-50 w-full border-t bg-white shadow-xl">
           <div className="px-8 py-10">
             {menus
-              .filter(
-                (menu) => menu.name === activeMenu
-              )
+              .filter((menu) => menu.name === activeMenu)
               .map((menu) => (
-                <div
-                  key={menu.name}
-                  className="grid grid-cols-4 gap-6"
-                >
+                <div key={menu.name} className="grid grid-cols-4 gap-6">
                   {menu.items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="group cursor-pointer"
-                    >
+                    <div key={index} className="group cursor-pointer">
                       <div className="overflow-hidden rounded-xl">
                         <img
                           src={item.image}
@@ -271,9 +265,7 @@ const {user} = useAuth()
             ))}
 
             <div className="mt-4 flex flex-col gap-3">
-              <button className="text-left py-2">
-                Plans
-              </button>
+              <button className="text-left py-2">Plans</button>
 
               <button className="rounded-lg bg-orange-500 py-3 font-semibold text-white">
                 Sign Up Free

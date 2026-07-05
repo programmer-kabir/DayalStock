@@ -5,6 +5,8 @@ import Login from "../pages/Authencations/Login";
 import Register from "../pages/Authencations/Register";
 import NotFound from "../components/NotFound";
 import ContentPage from "../pages/ContentPage/ContentPage";
+import SingleContentPage from "../pages/ContentPage/SingleContentPage";
+import Dashboard from "../pages/Dashboard/Dashboard";
 
 const routes = createBrowserRouter([
   {
@@ -36,7 +38,12 @@ const routes = createBrowserRouter([
         path: "/:category/:subcategory",
         element: <ContentPage />,
       },
+      {
+        path: "/:category/content/:slug",
+        element: <SingleContentPage />,
+      },
     ],
   },
+  
 ]);
 export default routes;
